@@ -1,8 +1,8 @@
-from flask import Flask
+from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 import os
-
+import datetime
 from sqlalchemy import Column, ForeignKey
 
 # create app instance
@@ -20,10 +20,6 @@ db = SQLAlchemy()
 db.init_app(app) # initialize app with extension
 # Init ma (marshmallow)
 ma = Marshmallow()
-
-# Create the tables
-with app.app_context():
-    db.create_all()
 
 # patient Class/Model
 class Patient(db.Model):
@@ -47,28 +43,73 @@ class PatientSchema(ma.Schema):
 patient_schema  = PatientSchema() #strict = True to rid of console warning
 patients_schema = PatientSchema(many=True) # we need schema for multiple patients. If we are fetching multiple patients we need this
 
-# # doctor Class/Model
-# class Doctor(db.Model):
-#     id = db.Column(db.Integer, primary_key=True)
-#     patient_id = db.Column(db.Integer, db.ForeignKey("patient.id"), nullable = False) # one doctor to many patients
-#     first_name = db.Column(db.String(100))
-#     last_name = db.Column(db.String(100))
-#     dob = db.Column(db.DateTime)
+# Create a patient
+@app.route('/patient', methods=['POST'])
+def patient_create():
+    format = '%m/%d/%Y'
 
-#     def __init__(self, first_name, last_name, dob):
-#         self.first_name = first_name
-#         self.last_name = last_name 
-#         self.dob = dob
+    # read in the post information that was posted from the client (react)
+    first_name = request.json['first_name']
+    last_name = request.json['last_name']
+    dob = datetime.datetime.strptime(request.json['dob'], format)
 
-# # Doctor Schema
-# class DoctorSchema(ma.Schema):
-#     class Meta:
-#         fields = ('id', 'patient_id', 'first_name', 'last_name', 'dob')
+    # initialize a new object
+    new_patient = Patient(first_name, last_name, dob)
 
-# # Initialize Schema
-# doctor_schema = DoctorSchema(strict=True)
-# doctors_schema = DoctorSchema(many=True, strict=True)
+    # add and commit new database entry
+    db.session.add(new_patient)
+    db.session.commit()
 
+    return patient_schema.jsonify(new_patient)
+
+
+# get all patients
+@app.route('/patient', methods=['GET'])
+def get_patients():
+    all_patients = Patient.query.all() # example of why sqlalchemy is helpful
+    result = patients_schema.dump(all_patients)
+    return jsonify(result)
+
+# get single patient
+@app.route('/patient/<id>', methods=['GET'])
+def get_patient(id):
+    patient = Patient.query.get(id) # example of why sqlalchemy is helpful
+    return patient_schema.jsonify(patient)
+
+# Update a patient
+@app.route('/patient/<id>', methods=['PUT'])
+def patient_update(id):
+    patient = Patient.query.get(id)
+
+    format = '%m/%d/%Y'
+
+    # read in the post information that was posted from the client (react)
+    first_name = request.json['first_name']
+    last_name = request.json['last_name']
+    dob = datetime.datetime.strptime(request.json['dob'], format)
+
+    #construct new product to submit to the database
+    patient.first_name = first_name
+    patient.last_name = last_name 
+    patient.dob = dob 
+
+    # commit new changes to database
+    db.session.commit()
+
+    return patient_schema.jsonify(patient)
+
+# Delete single patient
+@app.route('/patient/<id>', methods=['DELETE'])
+def patient_delete(id):
+    patient = Patient.query.get(id) # example of why sqlalchemy is helpful
+    db.session.delete(patient)
+    db.session.commit()
+    return patient_schema.jsonify(patient)
+
+
+# Create the tables
+with app.app_context(): # must be below the schema init
+    db.create_all()
 
 # API route
 @app.route('/')
