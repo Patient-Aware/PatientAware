@@ -17,7 +17,16 @@ function App() {
 
 
   return (
-    <div>App</div>
+    <div>
+
+        {(typeof data.members === 'undefined') ? ( // if members == undefined that means the api is being fetched and we don't have the members yet
+            <p>Loading...</p>
+        ) : (
+            data.members.map((member, i) => ( // if members are available, we map every member to a <p> tag
+                <p key={i}>{member}</p>
+            ))
+        )}
+    </div>
   )
 }
 
