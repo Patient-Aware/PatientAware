@@ -8,7 +8,6 @@ from sqlalchemy import Column, ForeignKey
 # create app instance
 app = Flask(__name__)
 
-
 # base directory for database
 basedir = os.path.abspath(os.path.dirname(__file__))
 
