@@ -11,7 +11,7 @@ def hello_world():
 #another api route for example
 @app.route('/members')
 def members():
-    return {"members": ["member1, member2, member3"]}
+    return {"members": ["Matt", "Chris", "Ralph", "Luke"]}
 
 if __name__ == "__main__":
     app.run(debug=True)
