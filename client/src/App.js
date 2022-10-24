@@ -2,6 +2,8 @@ import React from 'react'
 import AppBar from '@mui/material/AppBar'
 import Toolbar from '@mui/material/Toolbar'
 import Typography from '@mui/material/Typography'
+import Box from '@mui/material/Box'
+import Home from './components/Home'
 
 function App() {
   
@@ -14,6 +16,9 @@ function App() {
                 </Typography>
             </Toolbar>
         </AppBar>
+        <Box sx={{ mt: 2 }}>
+          <Home></Home>
+        </Box>
     </div>
   )
 }
