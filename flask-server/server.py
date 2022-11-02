@@ -18,12 +18,28 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'db.sqlite')
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False # stop console from complaining OPTIONAL
 
-# initialize celery client
-app.config['CELERY_BROKER_URL'] = 'redis://localhost:6379/0'
-app.config['CELERY_RESULT_BACKEND'] = 'redis://localhost:6379/0'
+def make_celery(app):
+    celery = Celery(
+        app.import_name,
+        backend=app.config['CELERY_RESULT_BACKEND'],
+        broker=app.config['CELERY_BROKER_URL']
+    )
+    #celery.conf.update(app.config)
 
-celery = Celery(app.name, broker=app.config['CELERY_BROKER_URL'])
-celery.conf.update(app.config)
+    class ContextTask(celery.Task):
+        def __call__(self, *args, **kwargs):
+            with app.app_context():
+                return self.run(*args, **kwargs)
+
+    celery.Task = ContextTask
+    return celery
+
+
+app.config.update(
+    CELERY_BROKER_URL='redis://localhost:6379',
+    CELERY_RESULT_BACKEND='redis://localhost:6379'
+)
+celery = make_celery(app)
 
 # Init db
 db = SQLAlchemy()
@@ -72,17 +88,47 @@ def patient_create():
 
     return patient_schema.jsonify(new_patient)
 
-@celery.task
-def sensor_read_task():
-    time.sleep(60)
-    result = [10.0, 11.0, 12.0, 13.0]
+@celery.task(bind = True)
+def sensor_read_task(self):
+    time.sleep(30)
+    result = {"test" : 100, "status" : "complete", "val1" : 100.0}
     return result
 
 @app.route('/start_test', methods=['GET'])
 def start_test():
     task = sensor_read_task.apply_async()
-    task.wait()
-    return task
+    #task.wait()
+    return {'state' : task.state, 'id' : task.id}
+
+@app.route('/status/<task_id>')
+def taskstatus(task_id):
+    task = sensor_read_task.AsyncResult(task_id)
+    if task.state == 'PENDING':
+        # job did not start yet
+        response = {
+            'state': task.state,
+            'current': 0,
+            'total': 1,
+            'status': 'Pending...'
+        }
+    elif task.state != 'FAILURE':
+        response = {
+            'state': task.state,
+            'current': task.info.get('current', 0),
+            'total': task.info.get('total', 1),
+            'status': task.info.get('status', '')
+        }
+        if 'result' in task.info:
+            response['result'] = task.info['result']
+    else:
+        # something went wrong in the background job
+        response = {
+            'state': task.state,
+            'current': 1,
+            'total': 1,
+            'status': str(task.info),  # this is the exception raised
+        }
+    return jsonify(response)
 
 # get all patients
 @app.route('/patient', methods=['GET'])
