@@ -1,9 +1,12 @@
+from unittest import result
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 import os
 import datetime
 from sqlalchemy import Column, ForeignKey
+from celery import Celery
+import time
 
 # create app instance
 app = Flask(__name__)
@@ -14,6 +17,13 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 # database
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'db.sqlite')
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False # stop console from complaining OPTIONAL
+
+# initialize celery client
+app.config['CELERY_BROKER_URL'] = 'redis://localhost:6379/0'
+app.config['CELERY_RESULT_BACKEND'] = 'redis://localhost:6379/0'
+
+celery = Celery(app.name, broker=app.config['CELERY_BROKER_URL'])
+celery.conf.update(app.config)
 
 # Init db
 db = SQLAlchemy()
@@ -62,6 +72,17 @@ def patient_create():
 
     return patient_schema.jsonify(new_patient)
 
+@celery.task
+def sensor_read_task():
+    time.sleep(60)
+    result = [10.0, 11.0, 12.0, 13.0]
+    return result
+
+@app.route('/start_test', methods=['GET'])
+def start_test():
+    task = sensor_read_task.apply_async()
+    task.wait()
+    return task
 
 # get all patients
 @app.route('/patient', methods=['GET'])
