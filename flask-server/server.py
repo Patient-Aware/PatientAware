@@ -91,7 +91,7 @@ def patient_create():
 @celery.task(bind = True)
 def sensor_read_task(self):
     time.sleep(30)
-    result = {"test" : 100, "status" : "complete", "val1" : 100.0}
+    result = {"port1_dCurrent" : 0.234, "port2_dCurrent" : 0.453, "port3_dCurrent" : 0.778, "port4_dCurrent" : 0.5587}
     return result
 
 @app.route('/start_test', methods=['GET'])
