@@ -3,7 +3,7 @@ from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 import os
-import datetime
+from datetime import datetime
 from sqlalchemy import Column, ForeignKey
 from celery import Celery
 import time
@@ -47,6 +47,35 @@ db.init_app(app) # initialize app with extension
 # Init ma (marshmallow)
 ma = Marshmallow()
 
+# SensorTask class/model
+class SensorTask(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    #task_id = db.Column(db.String(100)) # task_id returned by celery
+    status = db.Column(db.String(100)) # in-progress, cancelled, complete
+    start_time = db.Column(db.DateTime, default = datetime.now())  # time when test starts
+    end_time = db.Column(db.DateTime) # time when test completes
+    port1_delta = db.Column(db.Float)
+    port2_delta = db.Column(db.Float)
+    port3_delta = db.Column(db.Float)
+    port4_delta = db.Column(db.Float)
+    
+    def __init__(self, status, start_time, end_time, port1_delta, port2_delta,port3_delta,port4_delta):
+        #self.task_id = task_id
+        self.status = status 
+        self.start_time = start_time
+        self.end_time = end_time
+        self.port1_delta = port1_delta
+        self.port2_delta = port2_delta
+        self.port3_delta = port3_delta
+        self.port4_delta = port4_delta
+
+# Patient Schema
+class SensorTaskSchema(ma.Schema):
+    class Meta: # the fields we are allowed to show
+        fields = ('id', 'status', 'start_time', 'end_time', 'port1_delta', 'port2_delta', 'port3_delta', 'port4_delta')
+
+sensortask_schema  = SensorTaskSchema() #strict = True to rid of console warning
+sensortasks_schema = SensorTaskSchema(many=True) # we need schema for multiple patients. If we are fetching multiple patients we need this
 # patient Class/Model
 class Patient(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -91,14 +120,21 @@ def patient_create():
 @celery.task(bind = True)
 def sensor_read_task(self):
     time.sleep(30)
-    result = {"port1_dCurrent" : 0.234, "port2_dCurrent" : 0.453, "port3_dCurrent" : 0.778, "port4_dCurrent" : 0.5587}
+    new_task = SensorTask(status="complete", start_time=datetime.now(), end_time=datetime.now(), port1_delta=0.0, port2_delta=0.0, port3_delta=0.0, port4_delta=0.0)
+    db.session.add(new_task)
+    db.session.commit()
+    #result = {"idval" : self.id, "port1_dCurrent" : 0.234, "port2_dCurrent" : 0.453, "port3_dCurrent" : 0.778, "port4_dCurrent" : 0.5587}
+    result = sensortask_schema.dump(new_task)
     return result
 
 @app.route('/start_test', methods=['GET'])
 def start_test():
-    task = sensor_read_task.apply_async()
+    task = sensor_read_task.apply_async(args = [])
+    # new_task = SensorTask(status="complete", start_time=datetime.now(), end_time=datetime.now(), port1_delta=0.0, port2_delta=0.0, port3_delta=0.0, port4_delta=0.0)
+    # db.session.add(new_task)
+    # db.session.commit()
     #task.wait()
-    return {'state' : task.state, 'id' : task.id}
+    return {"task_id" : task.id}
 
 @app.route('/status/<task_id>')
 def taskstatus(task_id):
