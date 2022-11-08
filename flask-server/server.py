@@ -106,6 +106,8 @@ class AntigenSchema(ma.Schema):
     class Meta:
         fields = ('id', 'full_name', 'short_name', 'units', 'calibration_slope', 'calibration_intercept', 'normal_low', 'normal_high', 'excessive', 'spreading')
 
+
+
 # patient Class/Model
 class Patient(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -254,5 +256,12 @@ def hello_world():
 def members():
     return {"members": ["Matt", "Chris", "Ralph", "Luke"]}
 
+@app.before_first_request
+def setup():
+    CEA = Antigen("Carcinoembryonic Antigen", "CEA", "ng/mL", -0.55, 0.4, 0.0, 2.5, 10.0, 20.0)
+    db.session.add(CEA)
+    db.session.commit()
+
 if __name__ == "__main__":
+    
     app.run(debug=True)
