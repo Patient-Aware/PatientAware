@@ -10,7 +10,8 @@ import {
     Grid,
     FormControl,
     InputLabel,
-    MenuItem
+    MenuItem,
+    Box
 } from "@mui/material"
 
 export default function AntigenDialog(props) {
@@ -47,59 +48,61 @@ export default function AntigenDialog(props) {
                         For each port on the device, select the antigens you will be testing for. Leave unused ports as "None"
                     </DialogContentText>
 
-                    <Grid container spacing={2}>
-                        <Grid item xs={3}>
-                            <FormControl fullWidth>
-                                <InputLabel>Port 1</InputLabel>
-                                <Select 
-                                    label="Port 1"
-                                    value={port1}
-                                    onChange={(event) => setAntigenForPort(event.target.value, setPort1)}
-                                >
-                                    {antigenOptionMenuItems}
-                                </Select>
-                            </FormControl>
-                        </Grid>
+                    <Box sx={{ mt: 4 }}>
+                        <Grid container spacing={2}>
+                            <Grid item xs={3}>
+                                <FormControl fullWidth>
+                                    <InputLabel>Port 1</InputLabel>
+                                    <Select 
+                                        label="Port 1"
+                                        value={port1}
+                                        onChange={(event) => setAntigenForPort(event.target.value, setPort1)}
+                                    >
+                                        {antigenOptionMenuItems}
+                                    </Select>
+                                </FormControl>
+                            </Grid>
 
-                        <Grid item xs={3}>
-                            <FormControl fullWidth>
-                                <InputLabel>Port 2</InputLabel>
-                                <Select 
-                                    label="Port 2"
-                                    value={port2}
-                                    onChange={(event) => setAntigenForPort(event.target.value, setPort2)}
-                                >
-                                    {antigenOptionMenuItems}
-                                </Select>
-                            </FormControl>
-                        </Grid>
+                            <Grid item xs={3}>
+                                <FormControl fullWidth>
+                                    <InputLabel>Port 2</InputLabel>
+                                    <Select 
+                                        label="Port 2"
+                                        value={port2}
+                                        onChange={(event) => setAntigenForPort(event.target.value, setPort2)}
+                                    >
+                                        {antigenOptionMenuItems}
+                                    </Select>
+                                </FormControl>
+                            </Grid>
 
-                        <Grid item xs={3}>
-                            <FormControl fullWidth>
-                                <InputLabel>Port 3</InputLabel>
-                                <Select 
-                                    label="Port 3"
-                                    value={port3}
-                                    onChange={(event) => setAntigenForPort(event.target.value, setPort3)}
-                                >
-                                    {antigenOptionMenuItems}
-                                </Select>
-                            </FormControl>
-                        </Grid>
+                            <Grid item xs={3}>
+                                <FormControl fullWidth>
+                                    <InputLabel>Port 3</InputLabel>
+                                    <Select 
+                                        label="Port 3"
+                                        value={port3}
+                                        onChange={(event) => setAntigenForPort(event.target.value, setPort3)}
+                                    >
+                                        {antigenOptionMenuItems}
+                                    </Select>
+                                </FormControl>
+                            </Grid>
 
-                        <Grid item xs={3}>
-                            <FormControl fullWidth>
-                                <InputLabel>Port 4</InputLabel>
-                                <Select 
-                                    label="Port 4"
-                                    value={port4}
-                                    onChange={(event) => setAntigenForPort(event.target.value, setPort4)}
-                                >
-                                    {antigenOptionMenuItems}
-                                </Select>
-                            </FormControl>                            
+                            <Grid item xs={3}>
+                                <FormControl fullWidth>
+                                    <InputLabel>Port 4</InputLabel>
+                                    <Select 
+                                        label="Port 4"
+                                        value={port4}
+                                        onChange={(event) => setAntigenForPort(event.target.value, setPort4)}
+                                    >
+                                        {antigenOptionMenuItems}
+                                    </Select>
+                                </FormControl>                            
+                            </Grid>
                         </Grid>
-                    </Grid>
+                    </Box>
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleClose}>Cancel</Button>
