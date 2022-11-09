@@ -106,7 +106,9 @@ class AntigenSchema(ma.Schema):
     class Meta:
         fields = ('id', 'full_name', 'short_name', 'units', 'calibration_slope', 'calibration_intercept', 'normal_low', 'normal_high', 'excessive', 'spreading')
 
-
+# initialize schema
+antigen_schema = AntigenSchema()
+antigens_schema = AntigenSchema(many=True)
 
 # patient Class/Model
 class Patient(db.Model):
@@ -155,17 +157,19 @@ def sensor_read_task(self):
     new_task = SensorTask(status="complete", start_time=datetime.now(), end_time=datetime.now(), port1_delta=0.0, port2_delta=0.0, port3_delta=0.0, port4_delta=0.0)
     db.session.add(new_task)
     db.session.commit()
-    #result = {"idval" : self.id, "port1_dCurrent" : 0.234, "port2_dCurrent" : 0.453, "port3_dCurrent" : 0.778, "port4_dCurrent" : 0.5587}
     result = sensortask_schema.dump(new_task)
     return result
 
 @app.route('/start_test', methods=['GET'])
 def start_test():
     task = sensor_read_task.apply_async(args = [])
-    # new_task = SensorTask(status="complete", start_time=datetime.now(), end_time=datetime.now(), port1_delta=0.0, port2_delta=0.0, port3_delta=0.0, port4_delta=0.0)
-    # db.session.add(new_task)
-    # db.session.commit()
-    #task.wait()
+
+    # get antigen short_name from header
+    port1_antigen = request.json['port1_antigen']
+
+    # query antigen based on header to create database relationship
+    antigen1 = Antigen.query.filter(Antigen.short_name == port1_antigen)
+
     return {"task_id" : task.id}
 
 @app.route('/status/<task_id>')
@@ -258,8 +262,12 @@ def members():
 
 @app.before_first_request
 def setup():
+    db.session.query(Antigen).delete()
+    db.session.commit()
     CEA = Antigen("Carcinoembryonic Antigen", "CEA", "ng/mL", -0.55, 0.4, 0.0, 2.5, 10.0, 20.0)
     db.session.add(CEA)
+    empty_test = Antigen("Empty", "Empty", "n/a", 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+    db.session.add(empty_test)
     db.session.commit()
 
 if __name__ == "__main__":
