@@ -9,12 +9,25 @@ import {
     Select,
     Grid,
     FormControl,
-    InputLabel
+    InputLabel,
+    MenuItem
 } from "@mui/material"
 
 export default function AntigenDialog(props) {
 
     const { open, handleClose } = props
+
+    const antigenOptions = [
+        'None',
+        'CEA',
+        'Antigen 2',
+        'Antigen 3',
+        'Antigen 4'
+    ]
+
+    const antigenOptionMenuItems = antigenOptions.map(option => {
+        return <MenuItem value={option}>{option}</MenuItem>
+    })
 
     return (
         <div>
@@ -29,28 +42,44 @@ export default function AntigenDialog(props) {
                         <Grid item xs={3}>
                             <FormControl fullWidth>
                                 <InputLabel>Port 1</InputLabel>
-                                <Select label="Port 1"></Select>
+                                <Select 
+                                    label="Port 1"
+                                >
+                                    {antigenOptionMenuItems}
+                                </Select>
                             </FormControl>
                         </Grid>
 
                         <Grid item xs={3}>
                             <FormControl fullWidth>
                                 <InputLabel>Port 2</InputLabel>
-                                <Select label="Port 2"></Select>
+                                <Select 
+                                    label="Port 2"
+                                >
+                                    {antigenOptionMenuItems}
+                                </Select>
                             </FormControl>
                         </Grid>
 
                         <Grid item xs={3}>
                             <FormControl fullWidth>
                                 <InputLabel>Port 3</InputLabel>
-                                <Select label="Port 3"></Select>
+                                <Select 
+                                    label="Port 3"
+                                >
+                                    {antigenOptionMenuItems}
+                                </Select>
                             </FormControl>
                         </Grid>
 
                         <Grid item xs={3}>
                             <FormControl fullWidth>
                                 <InputLabel>Port 4</InputLabel>
-                                <Select label="Port 4"></Select>
+                                <Select 
+                                    label="Port 4"
+                                >
+                                    {antigenOptionMenuItems}
+                                </Select>
                             </FormControl>                            
                         </Grid>
                     </Grid>
