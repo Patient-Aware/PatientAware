@@ -17,6 +17,15 @@ export default function AntigenDialog(props) {
 
     const { open, handleClose } = props
 
+    const [port1, setPort1] = React.useState('None')
+    const [port2, setPort2] = React.useState('None')
+    const [port3, setPort3] = React.useState('None')
+    const [port4, setPort4] = React.useState('None')
+
+    const setAntigenForPort = (antigen, portSetter) => {
+        portSetter(antigen)
+    }
+
     const antigenOptions = [
         'None',
         'CEA',
@@ -44,6 +53,8 @@ export default function AntigenDialog(props) {
                                 <InputLabel>Port 1</InputLabel>
                                 <Select 
                                     label="Port 1"
+                                    value={port1}
+                                    onChange={(event) => setAntigenForPort(event.target.value, setPort1)}
                                 >
                                     {antigenOptionMenuItems}
                                 </Select>
@@ -55,6 +66,8 @@ export default function AntigenDialog(props) {
                                 <InputLabel>Port 2</InputLabel>
                                 <Select 
                                     label="Port 2"
+                                    value={port2}
+                                    onChange={(event) => setAntigenForPort(event.target.value, setPort2)}
                                 >
                                     {antigenOptionMenuItems}
                                 </Select>
@@ -66,6 +79,8 @@ export default function AntigenDialog(props) {
                                 <InputLabel>Port 3</InputLabel>
                                 <Select 
                                     label="Port 3"
+                                    value={port3}
+                                    onChange={(event) => setAntigenForPort(event.target.value, setPort3)}
                                 >
                                     {antigenOptionMenuItems}
                                 </Select>
@@ -77,6 +92,8 @@ export default function AntigenDialog(props) {
                                 <InputLabel>Port 4</InputLabel>
                                 <Select 
                                     label="Port 4"
+                                    value={port4}
+                                    onChange={(event) => setAntigenForPort(event.target.value, setPort4)}
                                 >
                                     {antigenOptionMenuItems}
                                 </Select>
