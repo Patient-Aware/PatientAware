@@ -4,8 +4,20 @@ import Typography from '@mui/material/Typography'
 import Button from '@mui/material/Button'
 import Stack from '@mui/material/Stack'
 
+import AntigenDialog from './AntigenDialog'
 
 export default function Home() {
+
+    const [open, setOpen] = React.useState(false)
+
+    const openAntigenDialog = () => {
+        setOpen(true)
+    }
+
+    const closeAntigenDialog = () => {
+        setOpen(false)
+    }
+
     return (
         <Container fixed>
             <Stack
@@ -17,7 +29,8 @@ export default function Home() {
                 <Typography variant='h1'>
                     Welcome to PatientAware
                 </Typography>
-                <Button variant='contained' size='large' sx={{ fontSize: '2em' }}>Start Test</Button>
+                <Button variant='contained' size='large' sx={{ fontSize: '2em' }} onClick={openAntigenDialog}>Start Test</Button>
+                <AntigenDialog open={open} handleClose={closeAntigenDialog}/>
             </Stack>
 
         </Container>
