@@ -3,7 +3,7 @@ import AppBar from '@mui/material/AppBar'
 import Toolbar from '@mui/material/Toolbar'
 import Typography from '@mui/material/Typography'
 import Box from '@mui/material/Box'
-import Home from './components/Home'
+import { Outlet } from "react-router-dom"
 
 function App() {
   
@@ -17,7 +17,7 @@ function App() {
             </Toolbar>
         </AppBar>
         <Box sx={{ mt: 2 }}>
-          <Home></Home>
+          <Outlet />
         </Box>
     </div>
   )
