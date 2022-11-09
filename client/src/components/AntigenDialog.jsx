@@ -18,6 +18,13 @@ export default function AntigenDialog(props) {
 
     const { open, handleClose } = props
 
+    const antigenOptions = ['None', 'CEA', 'Antigen 2', 'Antigen 3', 'Antigen 4']
+
+    const antigenOptionMenuItems = antigenOptions.map(option => {
+        return <MenuItem value={option}>{option}</MenuItem>
+    })
+
+
     const [port1, setPort1] = React.useState('None')
     const [port2, setPort2] = React.useState('None')
     const [port3, setPort3] = React.useState('None')
@@ -27,17 +34,19 @@ export default function AntigenDialog(props) {
         portSetter(antigen)
     }
 
-    const antigenOptions = [
-        'None',
-        'CEA',
-        'Antigen 2',
-        'Antigen 3',
-        'Antigen 4'
-    ]
+    const submitTest = () => {
+        const antigenSelections = {
+            port1_antigen: port1,
+            port2_antigen: port2,
+            port3_antigen: port3,
+            port4_antigen: port4
+        }
 
-    const antigenOptionMenuItems = antigenOptions.map(option => {
-        return <MenuItem value={option}>{option}</MenuItem>
-    })
+        //TODO: make this actually send a request to the backend
+        console.log("Test started")
+        console.log(antigenSelections)
+        handleClose()
+    }
 
     return (
         <div>
@@ -106,7 +115,7 @@ export default function AntigenDialog(props) {
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleClose}>Cancel</Button>
-                    <Button onClick={handleClose}>Start Test</Button>
+                    <Button onClick={submitTest}>Start Test</Button>
                 </DialogActions>
             </Dialog>
         </div>
