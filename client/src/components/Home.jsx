@@ -18,15 +18,7 @@ export async function onAntigenFormSubmit({ request, params }) {
 
 export default function Home() {
 
-    const [open, setOpen] = React.useState(false)
-
-    const openAntigenDialog = () => {
-        setOpen(true)
-    }
-
-    const closeAntigenDialog = () => {
-        setOpen(false)
-    }
+    const [dialogOpen, setDialogOpen] = React.useState(false)
 
     return (
         <Container fixed>
@@ -39,8 +31,8 @@ export default function Home() {
                 <Typography variant='h1'>
                     Welcome to PatientAware
                 </Typography>
-                <Button variant='contained' size='large' sx={{ fontSize: '2em' }} onClick={openAntigenDialog}>Start Test</Button>
-                <AntigenDialog open={open} handleClose={closeAntigenDialog}/>
+                <Button variant='contained' size='large' sx={{ fontSize: '2em' }} onClick={() => setDialogOpen(true)}>Start Test</Button>
+                <AntigenDialog open={dialogOpen} handleClose={() => setDialogOpen(false)}/>
             </Stack>
 
         </Container>
