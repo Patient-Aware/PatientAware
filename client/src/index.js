@@ -3,7 +3,8 @@ import ReactDOM from 'react-dom/client';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { createBrowserRouter, RouterProvider } from "react-router-dom"
-import Home from './components/Home';
+import  Home, { onAntigenFormSubmit } from './components/Home';
+import OngoingTest from './components/OngoingTest';
 
 const router = createBrowserRouter([
   {
@@ -12,7 +13,12 @@ const router = createBrowserRouter([
     children: [
       { 
         index: true, 
-        element: <Home/> 
+        element: <Home/>,
+        action: onAntigenFormSubmit 
+      },
+      {
+        path: "in-progress",
+        element: <OngoingTest />
       }
     ]
   }

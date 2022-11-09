@@ -5,6 +5,16 @@ import Button from '@mui/material/Button'
 import Stack from '@mui/material/Stack'
 
 import AntigenDialog from './AntigenDialog'
+import { redirect } from 'react-router-dom'
+
+export async function onAntigenFormSubmit({ request, params }) {
+    const formData = await request.formData()
+    
+    //TODO: make this a POST request to the backend
+    console.log("Antigens chosen. Test started")
+    console.log(formData)
+    return redirect("/in-progress")
+}
 
 export default function Home() {
 
