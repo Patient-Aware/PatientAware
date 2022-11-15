@@ -10,6 +10,14 @@ export default function TestStatus(props) {
     const [progress, setProgress] = React.useState(0)
     const [minutesLeft, setMinutesLeft] = React.useState(15)
 
+    const testStage = (progress) => {
+        if (progress >= 100) {
+            return 'Test Complete'
+        }
+
+        return (progress < 35 ? "Calibrating sensor" : "Testing sample")
+    }
+
     React.useEffect(() => {
         const timer = setInterval(() => {
             setProgress(progress + 7)
