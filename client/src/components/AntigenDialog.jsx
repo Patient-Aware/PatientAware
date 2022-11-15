@@ -20,7 +20,7 @@ export default function AntigenDialog(props) {
 
     const { open, handleClose } = props
 
-    const antigenOptions = ['None', 'CEA', 'Antigen 2', 'Antigen 3', 'Antigen 4']
+    const antigenOptions = ['None', 'CEA', 'CA19-9', 'KRAS', 'BRAF V600E']
 
     const antigenOptionMenuItems = antigenOptions.map(option => {
         return <MenuItem value={option}>{option}</MenuItem>
