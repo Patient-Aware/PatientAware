@@ -153,8 +153,22 @@ def patient_create():
 
 @celery.task(bind = True)
 def sensor_read_task(self):
-    time.sleep(30)
-    new_task = SensorTask(status="complete", start_time=datetime.now(), end_time=datetime.now(), port1_delta=0.0, port2_delta=0.0, port3_delta=0.0, port4_delta=0.0)
+    ### CALL SENSOR READ FUNCTION HERE ###
+    # results = run_test()
+    start_time = datetime.now()
+    time.sleep(60)
+    results = {"PORT1" : 0.234, "PORT2" : 0.432, "PORT3" : 0.123, "PORT4" : 0.567}
+    end_time = datetime.now()
+    ###
+
+    new_task = SensorTask(  status="complete", 
+                            start_time=start_time, 
+                            end_time=end_time, 
+                            port1_delta=results['PORT1'], 
+                            port2_delta=results['PORT2'], 
+                            port3_delta=results['PORT3'], 
+                            port4_delta=results['PORT4'])
+
     db.session.add(new_task)
     db.session.commit()
     result = sensortask_schema.dump(new_task)
@@ -162,13 +176,13 @@ def sensor_read_task(self):
 
 @app.route('/start_test', methods=['GET'])
 def start_test():
-    task = sensor_read_task.apply_async(args = [])
+    task = sensor_read_task.apply_async()
 
     # get antigen short_name from header
-    port1_antigen = request.json['port1_antigen']
+    #port1_antigen = request.json['port1_antigen']
 
     # query antigen based on header to create database relationship
-    antigen1 = Antigen.query.filter(Antigen.short_name == port1_antigen)
+    #antigen1 = Antigen.query.filter(Antigen.short_name == port1_antigen)
 
     return {"task_id" : task.id}
 
