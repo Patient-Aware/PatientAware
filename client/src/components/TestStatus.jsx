@@ -12,7 +12,7 @@ export default function TestStatus(props) {
 
     React.useEffect(() => {
         const timer = setInterval(() => {
-            setProgress(progress + 5)
+            setProgress(progress + 7)
             setMinutesLeft(minutesLeft - 1)
         }, 6000)
 
@@ -24,7 +24,7 @@ export default function TestStatus(props) {
     return (
         <Stack>
             <Typography variant="h6" gutterBottom>
-                Stage: { progress < 30 ? "Calibrating sensor" : "Testing sample" }
+                Stage: { progress < 35 ? "Calibrating sensor" : "Testing sample" }
             </Typography>
             <Typography variant="subtitle1" color="text.secondary" gutterBottom>
                 Time remaining: { minutesLeft } minutes
