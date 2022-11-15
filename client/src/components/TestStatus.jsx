@@ -23,6 +23,11 @@ export default function TestStatus(props) {
             setProgress(progress + 7)
             setMinutesLeft(minutesLeft - 1)
         }, 6000)
+        
+        if (progress >= 100) {
+            setProgress(100)
+            clearInterval(timer)
+        }
 
         return () => {
             clearInterval(timer)
@@ -32,7 +37,7 @@ export default function TestStatus(props) {
     return (
         <Stack>
             <Typography variant="h6" gutterBottom>
-                Stage: { progress < 35 ? "Calibrating sensor" : "Testing sample" }
+                Stage: { testStage(progress) }
             </Typography>
             <Typography variant="subtitle1" color="text.secondary" gutterBottom>
                 Time remaining: { minutesLeft } minutes
