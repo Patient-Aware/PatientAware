@@ -7,6 +7,8 @@ import {
 
 export default function TestStatus(props) {
 
+    //TODO: display the selected antigens on the page
+
     const [progress, setProgress] = React.useState(0)
     const [minutesLeft, setMinutesLeft] = React.useState(15)
 
@@ -19,6 +21,7 @@ export default function TestStatus(props) {
     }
 
     React.useEffect(() => {
+        //TODO: change this to regularly query the backend for the status of the test
         const timer = setInterval(() => {
             setProgress(progress + 7)
             setMinutesLeft(minutesLeft - 1)
