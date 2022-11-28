@@ -83,28 +83,22 @@ class Antigen(db.Model):
     full_name = db.Column(db.String(100))
     short_name = db.Column(db.String(20))
     units = db.Column(db.String(10))
-    calibration_slope = db.Column(db.Float)
-    calibration_intercept = db.Column(db.Float)
-    normal_low = db.Column(db.Float)
-    normal_high = db.Column(db.Float)
-    excessive = db.Column(db.Float)
-    spreading = db.Column(db.Float)
+    a_const = db.Column(db.Float)
+    b_const = db.Column(db.Float)
+    unhealthy_above = db.Column(db.Float)
 
-    def __init__(self, full_name, short_name, units, calibration_slope, calibration_intercept, normal_low, normal_high, excessive, spreading):
+    def __init__(self, full_name, short_name, units, a_const, b_const, unhealthy_above):
         self.full_name = full_name
         self.short_name = short_name
         self.units = units
-        self.calibration_slope = calibration_slope
-        self.calibration_intercept = calibration_intercept
-        self.normal_low = normal_low
-        self.normal_high = normal_high
-        self.excessive = excessive
-        self.spreading = spreading
+        self.a_const = a_const
+        self.b_const = b_const
+        self.unhealthy_above = unhealthy_above
 
 # Antigen Schema
 class AntigenSchema(ma.Schema):
     class Meta:
-        fields = ('id', 'full_name', 'short_name', 'units', 'calibration_slope', 'calibration_intercept', 'normal_low', 'normal_high', 'excessive', 'spreading')
+        fields = ('id', 'full_name', 'short_name', 'units', 'a_const', 'b_const', 'unhealthy_above')
 
 # initialize schema
 antigen_schema = AntigenSchema()
@@ -236,10 +230,18 @@ def members():
 @app.before_first_request
 def setup():
     db.session.query(Antigen).delete()
+    
     db.session.commit()
-    CEA = Antigen("Carcinoembryonic Antigen", "CEA", "ng/mL", -0.55, 0.4, 0.0, 2.5, 10.0, 20.0)
+    CEA = Antigen("Carcinoembryonic Antigen", "CEA", "ng/mL", 0.00002, -14.3, 10.0)
+    CA199 = Antigen("Carbohydrate Antigen", "CA19-9", "ng/ml", 9.4801, -232.1, 3.0)
+    KRAS = Antigen("Kirsten Rat Sarcoma Viral Oncogene Homolog", "KRAS", "ng/ml", 0.000002, 46.052, 1.0)
+    BRAF = Antigen("BRAF V600E", "BRAF V600E", "ng/ml", 2.861, 10.011, 0.1)
+    empty_test = Antigen("Empty", "None", "n/a", 0.0, 0.0, 0.0)
+
     db.session.add(CEA)
-    empty_test = Antigen("Empty", "Empty", "n/a", 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+    db.session.add(CA199)
+    db.session.add(KRAS)
+    db.session.add(BRAF)
     db.session.add(empty_test)
     db.session.commit()
 
