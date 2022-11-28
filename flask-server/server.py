@@ -76,6 +76,40 @@ class SensorTaskSchema(ma.Schema):
 
 sensortask_schema  = SensorTaskSchema() #strict = True to rid of console warning
 sensortasks_schema = SensorTaskSchema(many=True) # we need schema for multiple patients. If we are fetching multiple patients we need this
+
+# Antigen Model/Class
+class Antigen(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    full_name = db.Column(db.String(100))
+    short_name = db.Column(db.String(20))
+    units = db.Column(db.String(10))
+    calibration_slope = db.Column(db.Float)
+    calibration_intercept = db.Column(db.Float)
+    normal_low = db.Column(db.Float)
+    normal_high = db.Column(db.Float)
+    excessive = db.Column(db.Float)
+    spreading = db.Column(db.Float)
+
+    def __init__(self, full_name, short_name, units, calibration_slope, calibration_intercept, normal_low, normal_high, excessive, spreading):
+        self.full_name = full_name
+        self.short_name = short_name
+        self.units = units
+        self.calibration_slope = calibration_slope
+        self.calibration_intercept = calibration_intercept
+        self.normal_low = normal_low
+        self.normal_high = normal_high
+        self.excessive = excessive
+        self.spreading = spreading
+
+# Antigen Schema
+class AntigenSchema(ma.Schema):
+    class Meta:
+        fields = ('id', 'full_name', 'short_name', 'units', 'calibration_slope', 'calibration_intercept', 'normal_low', 'normal_high', 'excessive', 'spreading')
+
+# initialize schema
+antigen_schema = AntigenSchema()
+antigens_schema = AntigenSchema(many=True)
+
 # patient Class/Model
 class Patient(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -199,5 +233,16 @@ def hello_world():
 def members():
     return {"members": ["Matt", "Chris", "Ralph", "Luke"]}
 
+@app.before_first_request
+def setup():
+    db.session.query(Antigen).delete()
+    db.session.commit()
+    CEA = Antigen("Carcinoembryonic Antigen", "CEA", "ng/mL", -0.55, 0.4, 0.0, 2.5, 10.0, 20.0)
+    db.session.add(CEA)
+    empty_test = Antigen("Empty", "Empty", "n/a", 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+    db.session.add(empty_test)
+    db.session.commit()
+
 if __name__ == "__main__":
+    
     app.run(debug=True)
