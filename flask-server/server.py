@@ -50,7 +50,7 @@ ma = Marshmallow()
 # SensorTask class/model
 class SensorTask(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    #task_id = db.Column(db.String(100)) # task_id returned by celery
+    task_uuid = db.Column(db.String(100)) #UUID Value (stored as string.. not ideal but works for now)
     status = db.Column(db.String(100)) # in-progress, cancelled, complete
     start_time = db.Column(db.DateTime, default = datetime.now())  # time when test starts
     end_time = db.Column(db.DateTime) # time when test completes
@@ -59,8 +59,8 @@ class SensorTask(db.Model):
     port3_delta = db.Column(db.Float)
     port4_delta = db.Column(db.Float)
     
-    def __init__(self, status, start_time, end_time, port1_delta, port2_delta,port3_delta,port4_delta):
-        #self.task_id = task_id
+    def __init__(self, task_uuid, status, start_time, end_time, port1_delta, port2_delta,port3_delta,port4_delta):
+        self.task_uuid = task_uuid
         self.status = status 
         self.start_time = start_time
         self.end_time = end_time
@@ -72,7 +72,7 @@ class SensorTask(db.Model):
 # Patient Schema
 class SensorTaskSchema(ma.Schema):
     class Meta: # the fields we are allowed to show
-        fields = ('id', 'status', 'start_time', 'end_time', 'port1_delta', 'port2_delta', 'port3_delta', 'port4_delta')
+        fields = ('id','task_uuid', 'status', 'start_time', 'end_time', 'port1_delta', 'port2_delta', 'port3_delta', 'port4_delta')
 
 sensortask_schema  = SensorTaskSchema() #strict = True to rid of console warning
 sensortasks_schema = SensorTaskSchema(many=True) # we need schema for multiple patients. If we are fetching multiple patients we need this
@@ -119,52 +119,27 @@ def patient_create():
 
 @celery.task(bind = True)
 def sensor_read_task(self):
+    
     time.sleep(30)
-    new_task = SensorTask(status="complete", start_time=datetime.now(), end_time=datetime.now(), port1_delta=0.0, port2_delta=0.0, port3_delta=0.0, port4_delta=0.0)
-    db.session.add(new_task)
+    
+    current_task =  SensorTask.query.filter_by(task_uuid=celery.current_task.request.id).first()
+    current_task.status = "complete"
+    current_task.port1_delta = 0.123
     db.session.commit()
-    #result = {"idval" : self.id, "port1_dCurrent" : 0.234, "port2_dCurrent" : 0.453, "port3_dCurrent" : 0.778, "port4_dCurrent" : 0.5587}
-    result = sensortask_schema.dump(new_task)
+    result = sensortask_schema.dump(current_task)
     return result
 
 @app.route('/start_test', methods=['GET'])
 def start_test():
     task = sensor_read_task.apply_async(args = [])
-    # new_task = SensorTask(status="complete", start_time=datetime.now(), end_time=datetime.now(), port1_delta=0.0, port2_delta=0.0, port3_delta=0.0, port4_delta=0.0)
-    # db.session.add(new_task)
-    # db.session.commit()
-    #task.wait()
+    new_task = SensorTask(task_uuid= task.id, status="in-progress", start_time=datetime.now(),end_time=datetime.now(),port1_delta=0.0, port2_delta=0.0, port3_delta=0.0, port4_delta=0.0)
+    
+    db.session.add(new_task)
+    db.session.commit()
+    
+    # make new experiment object with new task and header antigen info
     return {"task_id" : task.id}
 
-@app.route('/status/<task_id>')
-def taskstatus(task_id):
-    task = sensor_read_task.AsyncResult(task_id)
-    if task.state == 'PENDING':
-        # job did not start yet
-        response = {
-            'state': task.state,
-            'current': 0,
-            'total': 1,
-            'status': 'Pending...'
-        }
-    elif task.state != 'FAILURE':
-        response = {
-            'state': task.state,
-            'current': task.info.get('current', 0),
-            'total': task.info.get('total', 1),
-            'status': task.info.get('status', '')
-        }
-        if 'result' in task.info:
-            response['result'] = task.info['result']
-    else:
-        # something went wrong in the background job
-        response = {
-            'state': task.state,
-            'current': 1,
-            'total': 1,
-            'status': str(task.info),  # this is the exception raised
-        }
-    return jsonify(response)
 
 # get all patients
 @app.route('/patient', methods=['GET'])
