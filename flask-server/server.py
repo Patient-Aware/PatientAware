@@ -47,6 +47,26 @@ db.init_app(app) # initialize app with extension
 # Init ma (marshmallow)
 ma = Marshmallow()
 
+# Experiment class/model
+class Experiment(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    sensor_task_id = db.Column(db.Integer, db.ForeignKey('sensor_task.id'), nullable = False)
+    sensor_task = db.relationship('SensorTask', backref=db.backref('experiments', lazy = True))
+    
+    port1_antigen_id = db.Column(db.Integer, db.ForeignKey('antigen.id'), nullable = False)
+    port2_antigen_id = db.Column(db.Integer, db.ForeignKey('antigen.id'), nullable = False)
+    port3_antigen_id = db.Column(db.Integer, db.ForeignKey('antigen.id'), nullable = False)
+    port4_antigen_id = db.Column(db.Integer, db.ForeignKey('antigen.id'), nullable = False)
+
+    port1_antigen = db.relationship('Antigen', foreign_keys = [port1_antigen_id])
+    port2_antigen = db.relationship('Antigen', foreign_keys = [port2_antigen_id])   
+    port3_antigen = db.relationship('Antigen', foreign_keys = [port3_antigen_id]) 
+    port4_antigen = db.relationship('Antigen', foreign_keys = [port4_antigen_id])
+    
+class ExperimentSchema(ma.Schema):
+    class Meta:
+        fields = ('id', 'sensor_task_id', 'port1_antigen_id', 'port2_antigen_id', 'port3_antigen_id', 'port4_antigen_id')
+
 # SensorTask class/model
 class SensorTask(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -162,7 +182,20 @@ def start_test():
     task = sensor_read_task.apply_async(args = [])
     new_task = SensorTask(task_uuid= task.id, status="in-progress", start_time=datetime.now(),end_time=datetime.now(),port1_delta=0.0, port2_delta=0.0, port3_delta=0.0, port4_delta=0.0)
     
+    port1_antigen_name = "CEA"          # request.json['port1_antigen']
+    port2_antigen_name = "KRAS"         # request.json['port2_antigen']
+    port3_antigen_name = "CA19-9"       # request.json['port3_antigen']
+    port4_antigen_name = "BRAF V600E"   # request.json['port4_antigen']
+    
+    #current_task =  SensorTask.query.filter_by(task_uuid=celery.current_task.request.id).first()
+    port1_antigen = Antigen.query.filter_by(short_name = port1_antigen_name).first()
+    port2_antigen = Antigen.query.filter_by(short_name = port2_antigen_name).first()
+    port3_antigen = Antigen.query.filter_by(short_name = port3_antigen_name).first()
+    port4_antigen = Antigen.query.filter_by(short_name = port4_antigen_name).first()
+    
+    new_experiment = Experiment(sensor_task = new_task, port1_antigen=port1_antigen, port2_antigen = port2_antigen, port3_antigen=port3_antigen, port4_antigen=port4_antigen)
     db.session.add(new_task)
+    db.session.add(new_experiment)
     db.session.commit()
     
     # make new experiment object with new task and header antigen info
