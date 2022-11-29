@@ -29,6 +29,7 @@ export default function AntigenResult(props) {
     }
 
     const antigenDetails = antigenInfo[antigen]
+    const isHealthy = detectedLevel < antigenDetails.unhealthyLevel
 
     return (
         <Card sx={{ width: "100%" }}>
@@ -36,8 +37,17 @@ export default function AntigenResult(props) {
                 <Typography variant="h5">
                     { antigen }
                 </Typography>
-                <Typography color="text.secondary">
+                <Typography variant="subtitle1" color="text.secondary">
                     { antigenDetails.longName }
+                </Typography>
+
+                <Typography variant="h6" color={ isHealthy ? "success.light" : "error" }>
+                    { isHealthy ? "Healthy" : "Unhealthy" }
+                </Typography>
+                <Typography>{detectedLevel} ng/mL of {antigen} detected in the test sample</Typography>
+
+                <Typography variant="body2" color="text.secondary">
+                    Levels less than {antigenDetails.unhealthyLevel} ng/mL are considered healthy
                 </Typography>
             </CardContent>
         </Card>
