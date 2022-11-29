@@ -8,6 +8,8 @@ from sqlalchemy import Column, ForeignKey
 from celery import Celery
 import time
 
+import biosensor
+
 # create app instance
 app = Flask(__name__)
 
@@ -137,15 +139,15 @@ def sensor_read_task(self):
     result = sensortask_schema.dump(current_task)
     return result
 
-@app.route('/start_test', methods=['GET'])
+@app.route('/start_test', methods=['POST'])
 def start_test():
     task = sensor_read_task.apply_async(args = [])
     new_task = SensorTask(task_uuid= task.id, status="in-progress", start_time=datetime.now(),end_time=datetime.now(),port1_delta=0.0, port2_delta=0.0, port3_delta=0.0, port4_delta=0.0)
     
-    port1_antigen_name = "CEA"          # request.json['port1_antigen']
-    port2_antigen_name = "KRAS"         # request.json['port2_antigen']
-    port3_antigen_name = "CA19-9"       # request.json['port3_antigen']
-    port4_antigen_name = "BRAF V600E"   # request.json['port4_antigen']
+    port1_antigen_name = request.json['port1_antigen']
+    port2_antigen_name = request.json['port2_antigen']
+    port3_antigen_name = request.json['port3_antigen']
+    port4_antigen_name = request.json['port4_antigen']
     
     #current_task =  SensorTask.query.filter_by(task_uuid=celery.current_task.request.id).first()
     port1_antigen = Antigen.query.filter_by(short_name = port1_antigen_name).first()
