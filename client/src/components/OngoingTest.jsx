@@ -34,7 +34,7 @@ export default function OngoingTest() {
                 alignItems="center"
                 spacing={4}
             >
-                <Typography variant='h3'>
+                <Typography variant='h3' color="text.primary">
                     Testing in Progress
                 </Typography>
 

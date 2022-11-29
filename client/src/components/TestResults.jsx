@@ -28,7 +28,7 @@ export default function TestResults() {
                 alignItems="center"
                 spacing={8}
             >
-                <Typography variant='h1'>
+                <Typography variant='h1' color="text.primary">
                     Test Complete
                 </Typography>
                 

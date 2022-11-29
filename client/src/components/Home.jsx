@@ -32,7 +32,7 @@ export default function Home() {
                 alignItems="center"
                 spacing={8}
             >
-                <Typography variant='h1'>
+                <Typography variant='h1' color="text.primary">
                     Welcome to PatientAware
                 </Typography>
                 <Button variant='contained' size='large' sx={{ fontSize: '2em' }} onClick={() => setDialogOpen(true)}>Start Test</Button>

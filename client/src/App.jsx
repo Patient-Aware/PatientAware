@@ -31,7 +31,7 @@ function App() {
         <ThemeProvider theme={patientAwareTheme}>
           <AppBar position='static'>
               <Toolbar>
-                  <Typography variant='h5' component="div">
+                  <Typography variant='h5' component="div" color="text.primary">
                       PatientAware
                   </Typography>
               </Toolbar>
