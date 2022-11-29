@@ -32,8 +32,9 @@ export default function TestResults() {
                     Test Complete
                 </Typography>
                 
-                {results.map(result => <AntigenResult antigen={result.antigen} detectedLevel={result.detectedLevel} />)}
-
+                <Grid container>
+                    {results.map(result => <Grid item xs={5} sx={{ m: 1 }}><AntigenResult antigen={result.antigen} detectedLevel={result.detectedLevel} /></Grid>)}
+                </Grid>
                 <Grid container sx={{ mt: 2 }}>
                     <Grid item xs={6}>
                         <Button variant="contained" onClick={() => { navigate('/') }}>Return to Home</Button>
