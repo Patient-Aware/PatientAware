@@ -44,10 +44,11 @@ export default function AntigenResult(props) {
                 <Typography variant="h6" color={ isHealthy ? "success.light" : "error" }>
                     { isHealthy ? "Healthy" : "Unhealthy" }
                 </Typography>
+
+                <meter style={{ width: '80%', height: '100%', }} value={detectedLevel} optimum={antigenDetails.unhealthyLevel * 0.5} low={antigenDetails.unhealthyLevel * 0.8}  high={antigenDetails.unhealthyLevel} max={antigenDetails.unhealthyLevel * 2}></meter>
+
+
                 <Typography>{detectedLevel} ng/mL of {antigen} detected in the test sample</Typography>
-
-
-                <meter value={detectedLevel} optimum={antigenDetails.unhealthyLevel * 0.5} low={antigenDetails.unhealthyLevel * 0.8}  high={antigenDetails.unhealthyLevel} max={antigenDetails.unhealthyLevel * 2}></meter>
 
                 <Typography variant="body2" color="text.secondary">
                     Levels less than {antigenDetails.unhealthyLevel} ng/mL are considered healthy
