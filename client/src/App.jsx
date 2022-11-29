@@ -5,6 +5,7 @@ import Typography from '@mui/material/Typography'
 import Box from '@mui/material/Box'
 import { Outlet } from "react-router-dom"
 import { createTheme, ThemeProvider } from "@mui/material"
+import "@fontsource/raleway"
 
 function App() {
   
@@ -22,6 +23,9 @@ function App() {
         primary: '#132f3d',
       },
     },
+    typography: {
+      fontFamily: "'Raleway', 'Roboto', 'Arial'"
+    }
   };
 
   const patientAwareTheme = createTheme(themeOptions)
