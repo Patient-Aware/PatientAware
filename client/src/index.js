@@ -4,7 +4,7 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { createBrowserRouter, RouterProvider } from "react-router-dom"
 import  Home, { onAntigenFormSubmit } from './components/Home';
-import OngoingTest from './components/OngoingTest';
+import OngoingTest, { loader as ongoingTestLoader } from './components/OngoingTest';
 import TestResults from './components/TestResults';
 
 const router = createBrowserRouter([
@@ -19,6 +19,7 @@ const router = createBrowserRouter([
       },
       {
         path: "in-progress",
+        loader: ongoingTestLoader,
         element: <OngoingTest />
       },
       {

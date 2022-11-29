@@ -9,8 +9,22 @@ import {
     CardContent
 } from "@mui/material"
 import TestStatus from "./TestStatus"
+import { getTest } from "../models/test"
+import { useLoaderData } from "react-router-dom"
+
+
+export async function loader() {
+    const test = await getTest()
+    return { test }
+}
 
 export default function OngoingTest() {
+
+    const { test } = useLoaderData()
+
+    const selectedAntigens = Object.values(test)
+        .filter(portSelection => portSelection !== "None")
+        .join(', ')
 
     return (
         <Container fixed>
@@ -23,7 +37,12 @@ export default function OngoingTest() {
                 <Typography variant='h3'>
                     Testing in Progress
                 </Typography>
-                <Typography variant='h5' color="text.secondary">
+
+                <Typography variant="h5" color="text.secondary">
+                    Testing for the following antigens: { selectedAntigens }
+                </Typography>
+
+                <Typography variant='subtitle2' color="text.secondary">
                     Follow the instructions below to conduct the antigen test
                 </Typography>
 

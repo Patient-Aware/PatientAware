@@ -16,7 +16,7 @@ export async function onAntigenFormSubmit({ request, params }) {
     //TODO: make this a POST request to the backend
     console.log("Antigens chosen. Test started")
     console.log(antigenSelections)
-    startTest(antigenSelections)
+    await startTest(antigenSelections)
     return redirect("/in-progress")
 }
 
