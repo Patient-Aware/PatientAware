@@ -6,13 +6,17 @@ import Stack from '@mui/material/Stack'
 
 import AntigenDialog from './AntigenDialog'
 import { redirect } from 'react-router-dom'
+import { startTest } from '../models/test'
+
 
 export async function onAntigenFormSubmit({ request, params }) {
     const formData = await request.formData()
-    
+    const antigenSelections = Object.fromEntries(formData)
+
     //TODO: make this a POST request to the backend
     console.log("Antigens chosen. Test started")
-    console.log(formData)
+    console.log(antigenSelections)
+    startTest(antigenSelections)
     return redirect("/in-progress")
 }
 
