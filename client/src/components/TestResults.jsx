@@ -3,11 +3,12 @@ import {
     Container,
     Stack,
     Typography,
-    Button
+    Button,
+    Grid
 } from "@mui/material"
 import AntigenResult from "./AntigenResult"
 import { getResults } from "../models/test"
-import { useLoaderData } from "react-router-dom"
+import { useLoaderData, useNavigate } from "react-router-dom"
 
 export async function testResultsLoader() {
     const results = await getResults()
@@ -17,6 +18,7 @@ export async function testResultsLoader() {
 export default function TestResults() {
 
     const { results } = useLoaderData()
+    const navigate = useNavigate()
 
     return (
         <Container fixed>
@@ -31,6 +33,16 @@ export default function TestResults() {
                 </Typography>
                 
                 {results.map(result => <AntigenResult antigen={result.antigen} detectedLevel={result.detectedLevel} />)}
+
+                <Grid container sx={{ mt: 2 }}>
+                    <Grid item xs={6}>
+                        <Button variant="contained" onClick={() => { navigate('/') }}>Return to Home</Button>
+                    </Grid>
+
+                    <Grid item xs={6}>
+                        <Button variant="contained" color="secondary">Share Results with Care Provider</Button>
+                    </Grid>
+                </Grid>
             </Stack>
 
         </Container>

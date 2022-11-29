@@ -16,7 +16,7 @@ function App() {
         main: '#25d897',
       },
       secondary: {
-        main: '#f50057',
+        main: '#1b3840',
       },
       text: {
         primary: '#132f3d',
