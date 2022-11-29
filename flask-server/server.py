@@ -130,11 +130,16 @@ antigens_schema = AntigenSchema(many=True)
 @celery.task(bind = True)
 def sensor_read_task(self):
     
-    time.sleep(30)
+    # call sensor read function
+    sensor_results = biosensor.run_test()
     
     current_task =  SensorTask.query.filter_by(task_uuid=celery.current_task.request.id).first()
     current_task.status = "complete"
-    current_task.port1_delta = 0.123
+    current_task.port1_delta = sensor_results['PORT1']
+    current_task.port2_delta = sensor_results['PORT2']
+    current_task.port3_delta = sensor_results['PORT3']
+    current_task.port4_delta = sensor_results['PORT4']
+    
     db.session.commit()
     result = sensortask_schema.dump(current_task)
     return result
