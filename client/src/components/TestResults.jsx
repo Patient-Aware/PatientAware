@@ -41,7 +41,7 @@ export default function TestResults() {
                     </Grid>
 
                     <Grid item xs={6}>
-                        <Button variant="contained" color="secondary">Share Results with Care Provider</Button>
+                        <Button variant="contained" color="secondary" onClick={() => { navigate('/past-results') }}>View past test results</Button>
                     </Grid>
                 </Grid>
             </Stack>
