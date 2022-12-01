@@ -49,25 +49,7 @@ db.init_app(app) # initialize app with extension
 # Init ma (marshmallow)
 ma = Marshmallow()
 
-# Experiment class/model
-class Experiment(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    sensor_task_id = db.Column(db.Integer, db.ForeignKey('sensor_task.id'), nullable = False)
-    sensor_task = db.relationship('SensorTask', backref=db.backref('experiments', lazy = True))
-    
-    port1_antigen_id = db.Column(db.Integer, db.ForeignKey('antigen.id'), nullable = False)
-    port2_antigen_id = db.Column(db.Integer, db.ForeignKey('antigen.id'), nullable = False)
-    port3_antigen_id = db.Column(db.Integer, db.ForeignKey('antigen.id'), nullable = False)
-    port4_antigen_id = db.Column(db.Integer, db.ForeignKey('antigen.id'), nullable = False)
 
-    port1_antigen = db.relationship('Antigen', foreign_keys = [port1_antigen_id])
-    port2_antigen = db.relationship('Antigen', foreign_keys = [port2_antigen_id])   
-    port3_antigen = db.relationship('Antigen', foreign_keys = [port3_antigen_id]) 
-    port4_antigen = db.relationship('Antigen', foreign_keys = [port4_antigen_id])
-    
-class ExperimentSchema(ma.Schema):
-    class Meta:
-        fields = ('id', 'sensor_task_id', 'port1_antigen_id', 'port2_antigen_id', 'port3_antigen_id', 'port4_antigen_id')
 
 # SensorTask class/model
 class SensorTask(db.Model):
@@ -126,6 +108,28 @@ class AntigenSchema(ma.Schema):
 antigen_schema = AntigenSchema()
 antigens_schema = AntigenSchema(many=True)
 
+# Experiment class/model
+class Experiment(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    sensor_task_id = db.Column(db.Integer, db.ForeignKey('sensor_task.id'), nullable = False)
+    sensor_task = db.relationship('SensorTask', backref=db.backref('experiments', lazy = True))
+    
+    port1_antigen_id = db.Column(db.Integer, db.ForeignKey('antigen.id'), nullable = False)
+    port2_antigen_id = db.Column(db.Integer, db.ForeignKey('antigen.id'), nullable = False)
+    port3_antigen_id = db.Column(db.Integer, db.ForeignKey('antigen.id'), nullable = False)
+    port4_antigen_id = db.Column(db.Integer, db.ForeignKey('antigen.id'), nullable = False)
+
+    port1_antigen = db.relationship('Antigen', foreign_keys = [port1_antigen_id])
+    port2_antigen = db.relationship('Antigen', foreign_keys = [port2_antigen_id])   
+    port3_antigen = db.relationship('Antigen', foreign_keys = [port3_antigen_id]) 
+    port4_antigen = db.relationship('Antigen', foreign_keys = [port4_antigen_id])
+    
+class ExperimentSchema(ma.Schema):
+    class Meta:
+        fields = ('id', 'sensor_task_id', 'port1_antigen_id', 'port2_antigen_id', 'port3_antigen_id', 'port4_antigen_id')
+    
+experiment_schema  = ExperimentSchema() #strict = True to rid of console warning
+experiments_schema = ExperimentSchema(many=True)
 
 @celery.task(bind = True)
 def sensor_read_task(self):
@@ -168,7 +172,23 @@ def start_test():
     # make new experiment object with new task and header antigen info
     return {"task_id" : task.id}
 
+@app.route('/experiment', methods=['GET'])
+def get_experiments():
+    all_experiments = Experiment.query.all()
+    result = experiments_schema.dump(all_experiments)
+    return jsonify(result)
 
+# experiment get route
+@app.route('/experiment/<id>', methods=['GET'])
+def get_experiment(id):
+    print(id)
+    experiment = Experiment.query.get(id)
+    p1_ant = antigen_schema.dump(experiment.port1_antigen)
+    print(p1_ant)
+    result = experiment_schema.dump(experiment)
+    print(result)
+    return jsonify(result)
+    
 
 # Create the tables
 with app.app_context(): # must be below the schema init
