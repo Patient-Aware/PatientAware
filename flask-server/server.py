@@ -7,6 +7,7 @@ from datetime import datetime
 from sqlalchemy import Column, ForeignKey
 from celery import Celery
 import time
+import math
 
 import biosensor
 
@@ -127,7 +128,7 @@ class Experiment(db.Model):
 class ExperimentSchema(ma.Schema):
     class Meta:
         fields = ('id', 'sensor_task_id', 'port1_antigen_id', 'port2_antigen_id', 'port3_antigen_id', 'port4_antigen_id')
-    
+
 experiment_schema  = ExperimentSchema() #strict = True to rid of console warning
 experiments_schema = ExperimentSchema(many=True)
 
@@ -176,18 +177,75 @@ def start_test():
 def get_experiments():
     all_experiments = Experiment.query.all()
     result = experiments_schema.dump(all_experiments)
-    return jsonify(result)
+    experiment_list = []
+    for exp in result:
+        exp_id = exp['id']
+        experiment = Experiment.query.get(exp_id)
+        p1_antigen = antigen_schema.dump(experiment.port1_antigen)
+        p2_antigen = antigen_schema.dump(experiment.port2_antigen)
+        p3_antigen = antigen_schema.dump(experiment.port3_antigen)
+        p4_antigen = antigen_schema.dump(experiment.port4_antigen)
+        sensor_task = sensortask_schema.dump(experiment.sensor_task)
+        
+        resultJson = {f'Experiment{exp_id}' : 
+                    {"test_date" : sensor_task['start_time'],
+                    "antigen1_full_name" : p1_antigen['full_name'],
+                    "antigen1_short_name" : p1_antigen['short_name'],
+                    "antigen1_units" : p1_antigen['units'],
+                    "antigen1_concentration" : p1_antigen['a_const'] * math.exp(p1_antigen['b_const'] * sensor_task['port1_delta']),
+                    "antigen2_full_name" : p2_antigen['full_name'],
+                    "antigen2_short_name" : p2_antigen['short_name'],
+                    "antigen2_units" : p2_antigen['units'],
+                    "antigen2_concentration" : p2_antigen['a_const'] * math.exp(p2_antigen['b_const'] * sensor_task['port2_delta']),
+                    "antigen3_full_name" : p3_antigen['full_name'],
+                    "antigen3_short_name" : p3_antigen['short_name'],
+                    "antigen3_units" : p3_antigen['units'],
+                    "antigen3_concentration" : p3_antigen['a_const'] * math.exp(p3_antigen['b_const'] * sensor_task['port3_delta']),
+                    "antigen4_full_name" : p4_antigen['full_name'],
+                    "antigen4_short_name" : p4_antigen['short_name'],
+                    "antigen4_units" : p4_antigen['units'],
+                    "antigen4_concentration" : p4_antigen['a_const'] * math.exp(p4_antigen['b_const'] * sensor_task['port4_delta'])}}
+        experiment_list.append(resultJson)
+    print(experiment_list)
+    return jsonify(experiment_list)
 
 # experiment get route
 @app.route('/experiment/<id>', methods=['GET'])
 def get_experiment(id):
     print(id)
     experiment = Experiment.query.get(id)
-    p1_ant = antigen_schema.dump(experiment.port1_antigen)
-    print(p1_ant)
-    result = experiment_schema.dump(experiment)
-    print(result)
-    return jsonify(result)
+    p1_antigen = antigen_schema.dump(experiment.port1_antigen)
+    p2_antigen = antigen_schema.dump(experiment.port2_antigen)
+    p3_antigen = antigen_schema.dump(experiment.port3_antigen)
+    p4_antigen = antigen_schema.dump(experiment.port4_antigen)
+    sensor_task = sensortask_schema.dump(experiment.sensor_task)
+    
+    resultJson = {f'Experiment{id}' : 
+                {"test_date" : sensor_task['start_time'],
+                  "antigen1_full_name" : p1_antigen['full_name'],
+                  "antigen1_short_name" : p1_antigen['short_name'],
+                  "antigen1_units" : p1_antigen['units'],
+                  "antigen1_concentration" : p1_antigen['a_const'] * math.exp(p1_antigen['b_const'] * sensor_task['port1_delta']),
+                  "antigen2_full_name" : p2_antigen['full_name'],
+                  "antigen2_short_name" : p2_antigen['short_name'],
+                  "antigen2_units" : p2_antigen['units'],
+                  "antigen2_concentration" : p2_antigen['a_const'] * math.exp(p2_antigen['b_const'] * sensor_task['port2_delta']),
+                  "antigen3_full_name" : p3_antigen['full_name'],
+                  "antigen3_short_name" : p3_antigen['short_name'],
+                  "antigen3_units" : p3_antigen['units'],
+                  "antigen3_concentration" : p3_antigen['a_const'] * math.exp(p3_antigen['b_const'] * sensor_task['port3_delta']),
+                  "antigen4_full_name" : p4_antigen['full_name'],
+                  "antigen4_short_name" : p4_antigen['short_name'],
+                  "antigen4_units" : p4_antigen['units'],
+                  "antigen4_concentration" : p4_antigen['a_const'] * math.exp(p4_antigen['b_const'] * sensor_task['port4_delta'])}}
+                
+    # antigen('id', 'full_name', 'short_name', 'units', 'a_const', 'b_const', 'unhealthy_above')
+    # sensortask('id','task_uuid', 'status', 'start_time', 'end_time', 'port1_delta', 'port2_delta', 'port3_delta', 'port4_delta')
+
+    #result = experiment_schema.dump(experiment)
+    #print(result)
+    #return jsonify(result)
+    return resultJson
     
 
 # Create the tables
