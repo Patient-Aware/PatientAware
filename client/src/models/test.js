@@ -26,3 +26,21 @@ export async function getResults() {
 
     return selectedAntigens.map(antigen => { return { antigen: antigen, detectedLevel: antigenLevels[antigen] } })
 }
+
+export async function addPastTest(test) {
+    //DEMO CODE
+    //TODO: update this to request past tests from backend
+    let past_tests = localStorage.getItem("past_tests") ? JSON.parse(localStorage.getItem("past_tests")) : []
+    console.log(typeof past_tests)
+    past_tests.push(test)
+    localStorage.setItem("past_tests", JSON.stringify(past_tests))
+
+}
+
+export async function getPastTests() {
+    if (!localStorage.getItem("past_tests")) {
+        return []
+    }
+
+    return JSON.parse(localStorage.getItem("past_tests"))
+}

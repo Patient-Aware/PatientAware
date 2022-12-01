@@ -7,11 +7,12 @@ import {
     Grid
 } from "@mui/material"
 import AntigenResult from "./AntigenResult"
-import { getResults } from "../models/test"
+import { addPastTest, getResults } from "../models/test"
 import { useLoaderData, useNavigate } from "react-router-dom"
 
 export async function testResultsLoader() {
     const results = await getResults()
+    await addPastTest(results)
     return { results }
 }
 

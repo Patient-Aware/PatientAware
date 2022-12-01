@@ -6,7 +6,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom"
 import  Home, { onAntigenFormSubmit } from './components/Home';
 import OngoingTest, { loader as ongoingTestLoader } from './components/OngoingTest';
 import TestResults, { testResultsLoader } from './components/TestResults';
-import PastResults from './components/PastResults';
+import PastResults, { pastResultsLoader } from './components/PastResults';
 
 const router = createBrowserRouter([
   {
@@ -30,6 +30,7 @@ const router = createBrowserRouter([
       },
       {
         path: 'past-results',
+        loader: pastResultsLoader,
         element: <PastResults />
       }
     ]
