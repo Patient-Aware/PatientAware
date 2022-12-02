@@ -23,11 +23,11 @@ export default function PastResults() {
     const navigate = useNavigate()
 
     const columns = [
-        { field: 'date', headerName: 'Test Date' },
-        { field: 'cea', headerName: 'CEA', width: 200 },
-        { field: 'ca19_9', headerName: 'CA19-9', width: 200 },
-        { field: 'kras', headerName: 'KRAS', width: 200 },
-        { field: 'braf_v600e', headerName: 'BRAF V600E', width: 200 }
+        { field: 'date', headerName: 'Test Date', width: 200 },
+        { field: 'cea', headerName: 'CEA', width: 150 },
+        { field: 'ca19_9', headerName: 'CA19-9', width: 150 },
+        { field: 'kras', headerName: 'KRAS', width: 150 },
+        { field: 'braf_v600e', headerName: 'BRAF V600E', width: 150 }
     ]
 
     const rows = past_results.map(test => {
@@ -40,7 +40,7 @@ export default function PastResults() {
 
         return {
             id: crypto.randomUUID(),
-            date: 'Today',
+            date: new Date(Date.now()).toDateString(),
             cea: cea_result ? `${cea_result.detectedLevel} ng/mL  ${ cea_result.detectedLevel >= 10 ? String.fromCodePoint(0x274c) : String.fromCodePoint(0x2705) }` : '',
             ca19_9: ca19_9_result ? `${ca19_9_result.detectedLevel} ng/mL ${ ca19_9_result.detectedLevel >= 3 ? String.fromCodePoint(0x274c) : String.fromCodePoint(0x2705) }` : '',
             kras: kras_result ? `${kras_result.detectedLevel} ng/mL ${ kras_result.detectedLevel >= 1 ? String.fromCodePoint(0x274c) : String.fromCodePoint(0x2705) }` : '',
