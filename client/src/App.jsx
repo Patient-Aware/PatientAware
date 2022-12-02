@@ -6,6 +6,8 @@ import Box from '@mui/material/Box'
 import { Outlet } from "react-router-dom"
 import { createTheme, ThemeProvider } from "@mui/material"
 import "@fontsource/raleway"
+import logo from './assets/patientaware_logo124_83.png'
+
 
 function App() {
   
@@ -14,7 +16,7 @@ function App() {
     palette: {
       type: 'light',
       primary: {
-        main: '#25d897',
+        main: '#3ADCA1',
       },
       secondary: {
         main: '#1b3840',
@@ -35,7 +37,9 @@ function App() {
         <ThemeProvider theme={patientAwareTheme}>
           <AppBar position='static'>
               <Toolbar>
-                  <Typography variant='h5' component="div" color="text.primary">
+                  
+                  <img src={logo} style={{ width: '80px' }}></img>
+                  <Typography variant='h5' component="div" color="text.primary" sx={{ ml: 1 }}>
                       PatientAware
                   </Typography>
               </Toolbar>
