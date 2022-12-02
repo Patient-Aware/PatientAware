@@ -8,6 +8,8 @@ import AntigenDialog from './AntigenDialog'
 import { redirect } from 'react-router-dom'
 import { startTest } from '../models/test'
 
+import logo from '../assets/patientaware_logo311_208.png'
+
 
 export async function onAntigenFormSubmit({ request, params }) {
     const formData = await request.formData()
@@ -30,8 +32,9 @@ export default function Home() {
                 direction="column"
                 justifyContent="space-between"
                 alignItems="center"
-                spacing={8}
+                spacing={4}
             >
+                <img src={logo} style={{ borderRadius: '2px' }} ></img>
                 <Typography variant='h2' color="text.primary">
                     Welcome to PatientAware
                 </Typography>
