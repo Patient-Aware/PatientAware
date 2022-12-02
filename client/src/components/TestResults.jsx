@@ -27,9 +27,9 @@ export default function TestResults() {
                 direction="column"
                 justifyContent="space-between"
                 alignItems="center"
-                spacing={8}
+                spacing={4}
             >
-                <Typography variant='h1' color="text.primary">
+                <Typography variant='h3' color="text.primary">
                     Test Complete
                 </Typography>
                 

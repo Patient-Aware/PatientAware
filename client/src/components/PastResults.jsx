@@ -51,9 +51,9 @@ export default function PastResults() {
             direction="column"
             justifyContent="space-between"
             alignItems="center"
-            spacing={8}
+            spacing={4}
         >
-            <Typography variant='h1' color="text.primary">
+            <Typography variant='h3' color="text.primary">
                 Previous Test Results
             </Typography>
             
