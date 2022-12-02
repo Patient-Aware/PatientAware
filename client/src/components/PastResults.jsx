@@ -3,11 +3,12 @@ import {
     Container,
     Stack,
     Typography,
-    Box
+    Box,
+    Button
 } from "@mui/material"
 import { DataGrid } from "@mui/x-data-grid"
 import { getPastTests } from "../models/test"
-import { useLoaderData } from "react-router-dom"
+import { useLoaderData, useNavigate } from "react-router-dom"
 
 export async function pastResultsLoader() {
     const past_results = await getPastTests()
@@ -18,6 +19,8 @@ export async function pastResultsLoader() {
 export default function PastResults() {
 
     const { past_results } = useLoaderData()
+
+    const navigate = useNavigate()
 
     const columns = [
         { field: 'date', headerName: 'Test Date' },
@@ -60,6 +63,8 @@ export default function PastResults() {
             <Box sx={{ height: 400, width: '100%' }}>
                 <DataGrid columns={columns} rows={rows} />
             </Box>
+
+            <Button variant="contained" onClick={() => { navigate('/') }}>Return to Home</Button>
         </Stack>
 
     </Container>
