@@ -39,7 +39,9 @@ export default function AntigenDialog(props) {
                     <DialogTitle>Select Antigens to Test For</DialogTitle>
                     <DialogContent>
                         <DialogContentText>
-                            For each port on the device, select the antigens you will be testing for. Leave unused ports as "None"
+                            For each port on the device, select the antigens you will be testing for. Leave unused ports as "None".
+                            <br/>
+                            <strong>Insert the sensors for the antigens you are testing for on the ports you selected before pressing "Start Test"</strong>
                         </DialogContentText>
 
                         <Box sx={{ mt: 4 }}>
