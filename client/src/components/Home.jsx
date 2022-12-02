@@ -5,7 +5,7 @@ import Button from '@mui/material/Button'
 import Stack from '@mui/material/Stack'
 
 import AntigenDialog from './AntigenDialog'
-import { redirect } from 'react-router-dom'
+import { redirect, useNavigate } from 'react-router-dom'
 import { startTest } from '../models/test'
 
 import logo from '../assets/patientaware_logo311_208.png'
@@ -26,6 +26,8 @@ export default function Home() {
 
     const [dialogOpen, setDialogOpen] = React.useState(false)
 
+    const navigate = useNavigate()
+
     return (
         <Container fixed>
             <Stack
@@ -39,6 +41,8 @@ export default function Home() {
                     Welcome to PatientAware
                 </Typography>
                 <Button variant='contained' size='large' sx={{ fontSize: '2em' }} onClick={() => setDialogOpen(true)}>Start Test</Button>
+                <Button variant="contained" color="secondary" onClick={() => { navigate('/past-results') }}>View past test results</Button>
+
                 <AntigenDialog open={dialogOpen} handleClose={() => setDialogOpen(false)}/>
             </Stack>
 
