@@ -34,7 +34,7 @@ export default function Home() {
                 direction="column"
                 justifyContent="space-between"
                 alignItems="center"
-                spacing={4}
+                spacing={2}
             >
                 <img src={logo} style={{ borderRadius: '2px' }} ></img>
                 <Typography variant='h2' color="text.primary">
