@@ -4,6 +4,7 @@ import {
     Stack,
     Typography
 } from "@mui/material"
+import { useNavigate } from "react-router-dom"
 
 export default function TestStatus(props) {
 
@@ -11,6 +12,8 @@ export default function TestStatus(props) {
 
     const [progress, setProgress] = React.useState(0)
     const [minutesLeft, setMinutesLeft] = React.useState(15)
+
+    const navigate = useNavigate()
 
     const testStage = (progress) => {
         if (progress >= 100) {
@@ -30,6 +33,7 @@ export default function TestStatus(props) {
         if (progress >= 100) {
             setProgress(100)
             clearInterval(timer)
+            navigate('/results')
         }
 
         return () => {

@@ -6,7 +6,9 @@
   "dependencies": {
     "@emotion/react": "^11.10.4",
     "@emotion/styled": "^11.10.4",
+    "@fontsource/raleway": "^4.5.11",
     "@mui/material": "^5.10.10",
+    "@mui/x-data-grid": "^5.17.14",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
